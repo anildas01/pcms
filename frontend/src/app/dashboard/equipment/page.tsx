@@ -27,6 +27,7 @@ interface Equipment {
   quantity: number;
   availableNow: number;
   assignments: any[];
+  createdAt?: string;
 }
 
 export default function EquipmentPage() {
@@ -148,7 +149,7 @@ export default function EquipmentPage() {
         item.quantity,
         item.availableNow,
         `"${assignedTo}"`,
-        `"${new Date(item.createdAt).toLocaleString()}"`
+        `"${item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}"`
       ];
       csvRows.push(row.join(','));
     });

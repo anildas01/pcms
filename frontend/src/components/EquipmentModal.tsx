@@ -11,10 +11,11 @@ interface Equipment {
   quantity?: number;
   condition?: string;
   conditions?: {
-    Excellent: number;
-    Good: number;
-    Fair: number;
-    Poor: number;
+    Excellent?: number;
+    Good?: number;
+    Fair?: number;
+    Poor?: number;
+    [key: string]: number | undefined;
   };
 }
 
