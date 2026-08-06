@@ -1,0 +1,269 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  roleId    Int
+  role      Role     @relation(fields: [roleId], references: [id])
+  status              String   @default("active") // active, inactive
+  failedLoginAttempts Int      @default(0)
+  lockoutUntil        DateTime?
+  sessions            Session[]
+  visits              Visit[]
+  attendances         Attendance[]
+  notifications       Notification[]
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  permissions         String?  @default("[]")
+}
+
+model Role {
+  id          Int          @id @default(autoincrement())
+  name        String       @unique
+  permissions Permission[]
+  users       User[]
+}
+
+model Permission {
+  id     Int    @id @default(autoincrement())
+  name   String @unique
+  roleId Int
+  role   Role   @relation(fields: [roleId], references: [id])
+}
+
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  device    String?
+  ipAddress String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+model Patient {
+  id            Int      @id @default(autoincrement())
+  name          String
+  age           Int?
+  gender        String?
+  bloodGroup    String?
+  phone         String
+  address       String
+  diagnosis     String?
+  medicalPapers String?
+  status        String   @default("Active") // Active, Discharged, Deceased
+  visits        Visit[]
+  histories     MedicalHistory[]
+  invoices      Invoice[]
+  equipmentAssignments EquipmentAssignment[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  module    String
+  action    String
+  oldData   String?
+  newData   String?
+  reason    String?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}
+
+model Medicine {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  quantity    Int
+  unit        String   @default("units")
+  type        String   @default("Medicine")
+  expiryDate  DateTime?
+  status      String   @default("In Stock") // In Stock, Low Stock, Out of Stock
+  visits      VisitMedicine[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Equipment {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  quantity    Int      @default(1)
+  condition   String   @default("Good")
+  assignments EquipmentAssignment[]
+  visits      VisitEquipment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model EquipmentAssignment {
+  id          Int      @id @default(autoincrement())
+  equipmentId Int
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  patientId   Int
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  quantity    Int      @default(1)
+  status      String   @default("In Use") // In Use, Returned
+  assignedAt  DateTime @default(now())
+  returnedAt  DateTime?
+}
+
+model Visit {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  nurseId     Int
+  nurse       User     @relation(fields: [nurseId], references: [id])
+  date        DateTime
+  notes       String?
+  medicines   VisitMedicine[]
+  equipment   VisitEquipment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model VisitMedicine {
+  id          Int      @id @default(autoincrement())
+  visitId     Int
+  visit       Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  medicineId  Int
+  medicine    Medicine @relation(fields: [medicineId], references: [id])
+  quantity    Int
+}
+
+model VisitEquipment {
+  id          Int      @id @default(autoincrement())
+  visitId     Int
+  visit       Visit    @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  equipmentId Int
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  action      String   // Given, Taken Back
+}
+
+model MedicalHistory {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  date        DateTime
+  type        String   // Diagnosis, Treatment, Note
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Invoice {
+  id          Int      @id @default(autoincrement())
+  patientId   Int
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  amount      Float
+  status      String   @default("Pending") // Pending, Paid, Overdue
+  dueDate     DateTime?
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Attendance {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  date      DateTime
+  clockIn   DateTime?
+  clockOut  DateTime?
+  status    String   @default("Present") // Present, Absent, Half Day, Leave
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vehicle {
+  id          Int      @id @default(autoincrement())
+  name        String   // e.g. "Ambulance 1", "Van A"
+  type        String   // Ambulance, Car, Van, Bike
+  plateNumber String?
+  status      String   @default("Available") // Available, In Use, Maintenance
+  fuelLevel   String   @default("Full")
+  driverId    Int?
+  dispatches  Dispatch[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Supplier {
+  id             Int             @id @default(autoincrement())
+  name           String
+  contactPerson  String?
+  phone          String?
+  email          String?
+  address        String?
+  purchaseOrders PurchaseOrder[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model PurchaseOrder {
+  id          Int      @id @default(autoincrement())
+  supplierId  Int
+  supplier    Supplier @relation(fields: [supplierId], references: [id])
+  totalAmount Float
+  status      String   @default("Pending") // Pending, Approved, Received, Cancelled
+  date        DateTime @default(now())
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  assignedTo  Int?     // User ID (Volunteer or Staff)
+  status      String   @default("Pending") // Pending, In Progress, Completed
+  dueDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Dispatch {
+  id           Int      @id @default(autoincrement())
+  vehicleId    Int
+  vehicle      Vehicle  @relation(fields: [vehicleId], references: [id])
+  driverId     Int?     // User ID
+  destination  String
+  status       String   @default("Active") // Active, Returned
+  dispatchTime DateTime @default(now())
+  returnTime   DateTime?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}

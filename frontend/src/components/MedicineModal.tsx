@@ -1,0 +1,148 @@
+"use client";
+
+import React, { useState } from 'react';
+import { X } from 'lucide-react';
+
+interface Medicine {
+  id?: number;
+  name: string;
+  description?: string;
+  quantity: number;
+  type: string;
+  unit?: string;
+  expiryDate?: string;
+  status?: string;
+}
+
+interface MedicineModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (medicine: Medicine) => Promise<void>;
+  initialData?: Medicine | null;
+}
+
+export default function MedicineModal({ isOpen, onClose, onSave, initialData }: MedicineModalProps) {
+  const [formData, setFormData] = useState<Medicine>(
+    initialData || {
+      name: '',
+      description: '',
+      quantity: 0,
+      type: 'Medicine',
+      unit: 'units',
+      expiryDate: '',
+      status: 'In Stock'
+    }
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === 'quantity' ? parseInt(value) || 0 : value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      // If expiryDate is empty string, convert to undefined so Zod/Prisma accepts it
+      const submissionData = {
+        ...formData,
+        expiryDate: formData.expiryDate ? formData.expiryDate : undefined
+      };
+      await onSave(submissionData);
+      onClose();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-gray-900 bg-opacity-50 p-4">
+      <div className="relative w-full max-w-2xl rounded-lg bg-white shadow-xl">
+        <div className="flex items-center justify-between border-b p-4 sm:p-5">
+          <h3 className="text-xl font-semibold text-gray-900">
+            {initialData ? 'Edit Medicine' : 'Add Medicine'}
+          </h3>
+          <button onClick={onClose} type="button" className="ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900">
+            <X className="h-5 w-5" />
+            <span className="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-4 sm:p-5">
+          <div className="grid gap-4 mb-4 sm:grid-cols-2">
+            
+            <div className="sm:col-span-2">
+              <label className="mb-2 block text-sm font-medium text-gray-900">Type</label>
+              <div className="flex gap-4 mb-4">
+                <label className="flex items-center text-sm font-medium text-gray-700">
+                  <input type="radio" name="type" value="Medicine" checked={formData.type === 'Medicine'} onChange={handleChange} className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                  Medicine
+                </label>
+                <label className="flex items-center text-sm font-medium text-gray-700">
+                  <input type="radio" name="type" value="Medical Supplies" checked={formData.type === 'Medical Supplies'} onChange={handleChange} className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                  Medical Supplies
+                </label>
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-900">{formData.type === 'Medicine' ? 'Medicine Name' : 'Supply Name'}</label>
+              <input type="text" name="name" id="name" required
+                value={formData.name} onChange={handleChange}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
+                placeholder={`e.g. ${formData.type === 'Medicine' ? 'Paracetamol 500mg' : 'Bandages'}`} />
+            </div>
+
+            <div>
+              <label htmlFor="quantity" className="mb-2 block text-sm font-medium text-gray-900">Quantity</label>
+              <input type="number" name="quantity" id="quantity" required min="0"
+                value={formData.quantity || ''} onChange={handleChange}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
+                placeholder="0" />
+            </div>
+
+
+
+            <div>
+              <label htmlFor="expiryDate" className="mb-2 block text-sm font-medium text-gray-900">Expiry Date</label>
+              <input type="date" name="expiryDate" id="expiryDate"
+                value={formData.expiryDate ? new Date(formData.expiryDate).toISOString().split('T')[0] : ''} 
+                onChange={handleChange}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" />
+            </div>
+
+
+
+            <div className="sm:col-span-2">
+              <label htmlFor="description" className="mb-2 block text-sm font-medium text-gray-900">Description / Notes</label>
+              <textarea name="description" id="description" rows={3}
+                value={formData.description} onChange={handleChange}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500" 
+                placeholder="Write any details about the batch or supplier here..."></textarea>
+            </div>
+
+          </div>
+          
+          <div className="flex items-center space-x-3 rounded-b border-t border-gray-200 pt-4">
+            <button type="submit" disabled={isSubmitting}
+              className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50">
+              {isSubmitting ? 'Saving...' : (initialData ? 'Save Changes' : 'Add Medicine')}
+            </button>
+            <button type="button" onClick={onClose}
+              className="rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
