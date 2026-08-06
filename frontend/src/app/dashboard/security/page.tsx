@@ -14,7 +14,7 @@ export default function SecurityPage() {
   const fetchSessions = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/security/sessions', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/security/sessions`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setSessions(await res.json());
@@ -28,7 +28,7 @@ export default function SecurityPage() {
   const revokeSession = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/security/sessions/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/security/sessions/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });

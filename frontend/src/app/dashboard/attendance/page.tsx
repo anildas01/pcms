@@ -30,7 +30,7 @@ export default function AttendancePage() {
     try {
       const token = localStorage.getItem('token');
       // Fetch my today's record
-      const todayRes = await fetch('http://127.0.0.1:4000/api/attendance/today', {
+      const todayRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/attendance/today`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (todayRes.ok) {
@@ -39,7 +39,7 @@ export default function AttendancePage() {
       }
 
       // Fetch all records
-      const allRes = await fetch('http://127.0.0.1:4000/api/attendance', {
+      const allRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/attendance`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (allRes.ok) {
@@ -56,7 +56,7 @@ export default function AttendancePage() {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/attendance/clock-in', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/attendance/clock-in`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -77,7 +77,7 @@ export default function AttendancePage() {
     setActionLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/attendance/clock-out', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/attendance/clock-out`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

@@ -49,7 +49,7 @@ export default function MedicinesPage() {
   const fetchMedicines = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/medicines', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/medicines`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -70,8 +70,8 @@ export default function MedicinesPage() {
     const token = localStorage.getItem('token');
     const isEdit = !!medicineData.id;
     const url = isEdit 
-      ? `http://127.0.0.1:4000/api/medicines/${medicineData.id}` 
-      : 'http://127.0.0.1:4000/api/medicines';
+      ? `${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/medicines/${medicineData.id}` 
+      : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/medicines`;
       
     const res = await fetch(url, {
       method: isEdit ? 'PUT' : 'POST',
@@ -101,7 +101,7 @@ export default function MedicinesPage() {
     
     const newQuantity = medicine.quantity - quantityUsed;
 
-    const res = await fetch(`http://127.0.0.1:4000/api/medicines/${medicineId}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/medicines/${medicineId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ export default function MedicinesPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/medicines/${medicineToDelete.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/medicines/${medicineToDelete.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

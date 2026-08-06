@@ -70,10 +70,10 @@ export default function VisitModal({ isOpen, onClose, onSave, initialData }: Vis
       const headers = { 'Authorization': `Bearer ${token}` };
       
       const [pRes, nRes, mRes, eRes] = await Promise.all([
-        fetch('http://127.0.0.1:4000/api/patients', { headers }),
-        fetch('http://127.0.0.1:4000/api/users', { headers }),
-        fetch('http://127.0.0.1:4000/api/medicines', { headers }),
-        fetch('http://127.0.0.1:4000/api/equipment', { headers })
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/patients`, { headers }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/users`, { headers }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/medicines`, { headers }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment`, { headers })
       ]);
       
       if (pRes.ok) setPatients(await pRes.json());

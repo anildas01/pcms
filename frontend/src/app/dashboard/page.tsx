@@ -27,7 +27,7 @@ export default function Dashboard() {
       const token = localStorage.getItem('token');
       
       // Fetch Stats
-      const statsRes = await fetch('http://127.0.0.1:4000/api/dashboard/stats', {
+      const statsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/dashboard/stats`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (statsRes.ok) {
@@ -36,7 +36,7 @@ export default function Dashboard() {
       }
 
       // Fetch Visits for the upcoming list
-      const visitsRes = await fetch('http://127.0.0.1:4000/api/visits', {
+      const visitsRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/visits`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (visitsRes.ok) {

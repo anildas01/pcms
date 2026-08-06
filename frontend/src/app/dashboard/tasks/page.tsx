@@ -14,7 +14,7 @@ export default function TasksPage() {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/tasks', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/tasks`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setTasks(await res.json());

@@ -53,7 +53,7 @@ export default function VisitsPage() {
   const fetchVisits = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/visits', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/visits`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -74,8 +74,8 @@ export default function VisitsPage() {
     const token = localStorage.getItem('token');
     const isEdit = !!visitData.id;
     const url = isEdit 
-      ? `http://127.0.0.1:4000/api/visits/${visitData.id}` 
-      : 'http://127.0.0.1:4000/api/visits';
+      ? `${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/visits/${visitData.id}` 
+      : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/visits`;
       
     const res = await fetch(url, {
       method: isEdit ? 'PUT' : 'POST',
@@ -101,7 +101,7 @@ export default function VisitsPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/visits/${visitToDelete.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/visits/${visitToDelete.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

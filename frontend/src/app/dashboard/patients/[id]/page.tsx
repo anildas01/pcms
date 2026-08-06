@@ -45,13 +45,13 @@ export default function PatientHistoryPage() {
     try {
       const token = localStorage.getItem('token');
       // Fetch Patient Details
-      const pRes = await fetch(`http://127.0.0.1:4000/api/patients/${patientId}`, {
+      const pRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/patients/${patientId}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (pRes.ok) setPatient(await pRes.json());
 
       // Fetch History
-      const hRes = await fetch(`http://127.0.0.1:4000/api/patients/${patientId}/history`, {
+      const hRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/patients/${patientId}/history`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (hRes.ok) setHistory(await hRes.json());
@@ -67,7 +67,7 @@ export default function PatientHistoryPage() {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/patients/${patientId}/history`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/patients/${patientId}/history`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ export default function SettingsPage() {
   const fetchSettings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/settings', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/settings`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setSettings(await res.json());
@@ -31,7 +31,7 @@ export default function SettingsPage() {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      await fetch('http://127.0.0.1:4000/api/settings', {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/settings`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export default function SettingsPage() {
     setBackupMsg('Backing up database...');
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/settings/backup', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/settings/backup`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });

@@ -51,7 +51,7 @@ export default function EquipmentPage() {
   const fetchEquipment = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/equipment', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -72,8 +72,8 @@ export default function EquipmentPage() {
     const token = localStorage.getItem('token');
     const isEdit = !!equipmentData.id;
     const url = isEdit 
-      ? `http://127.0.0.1:4000/api/equipment/${equipmentData.id}` 
-      : 'http://127.0.0.1:4000/api/equipment';
+      ? `${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/equipment/${equipmentData.id}` 
+      : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment`;
       
     const res = await fetch(url, {
       method: isEdit ? 'PUT' : 'POST',
@@ -99,7 +99,7 @@ export default function EquipmentPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/equipment/${equipmentToDelete.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/equipment/${equipmentToDelete.id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

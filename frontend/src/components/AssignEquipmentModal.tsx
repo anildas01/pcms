@@ -24,7 +24,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
   const fetchPatients = async () => {
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch('http://127.0.0.1:4000/api/patients', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/patients`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -44,7 +44,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
 
   const handlePatientSaved = async (patientData: any) => {
     const token = localStorage.getItem('token');
-    const res = await fetch('http://127.0.0.1:4000/api/patients', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/patients`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/equipment/${equipmentId}/assign`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/equipment/${equipmentId}/assign`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

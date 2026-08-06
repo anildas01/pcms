@@ -14,7 +14,7 @@ export default function DispatchPage() {
   const fetchDispatches = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/dispatch', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/dispatch`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setDispatches(await res.json());
@@ -28,7 +28,7 @@ export default function DispatchPage() {
   const returnDispatch = async (id: number) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/dispatch/${id}/return`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/dispatch/${id}/return`, {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${token}` }
       });

@@ -75,7 +75,7 @@ export default function PatientModal({ isOpen, onClose, onSave, initialData }: P
       uploadData.append('files', file);
     });
 
-    const res = await fetch('http://127.0.0.1:4000/api/upload', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/upload`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -253,7 +253,7 @@ export default function PatientModal({ isOpen, onClose, onSave, initialData }: P
                     <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                       {formData.medicalPapers.split(',').map((url, i) => (
                         <div key={`existing-${i}`} className="relative rounded-md border p-1 bg-white">
-                          <img src={`http://127.0.0.1:4000${url}`} alt="Existing doc" className="h-20 w-full object-cover rounded" />
+                          <img src={`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}${url}`} alt="Existing doc" className="h-20 w-full object-cover rounded" />
                         </div>
                       ))}
                     </div>

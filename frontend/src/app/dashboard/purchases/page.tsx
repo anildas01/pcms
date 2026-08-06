@@ -16,8 +16,8 @@ export default function PurchasesPage() {
     try {
       const token = localStorage.getItem('token');
       const [orderRes, suppRes] = await Promise.all([
-        fetch('http://127.0.0.1:4000/api/purchases/orders', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://127.0.0.1:4000/api/purchases/suppliers', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/purchases/orders`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/purchases/suppliers`, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
       
       if (orderRes.ok) setOrders(await orderRes.json());

@@ -21,7 +21,7 @@ export default function ReturnEquipmentModal({ isOpen, onClose, onSuccess, inUse
   useEffect(() => {
     if (isOpen) {
       const token = localStorage.getItem('token');
-      fetch('http://127.0.0.1:4000/api/patients', {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/patients`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       .then(res => res.json())
@@ -59,7 +59,7 @@ export default function ReturnEquipmentModal({ isOpen, onClose, onSuccess, inUse
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://127.0.0.1:4000/api/equipment/return/${assignmentId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/equipment/return/${assignmentId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

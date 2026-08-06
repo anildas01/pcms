@@ -13,7 +13,7 @@ export default function ReportsPage() {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/reports/stats', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/reports/stats`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) setStats(await res.json());
@@ -26,7 +26,7 @@ export default function ReportsPage() {
     const token = localStorage.getItem('token');
     
     // Create an invisible anchor tag to trigger the browser download
-    fetch(`http://127.0.0.1:4000/api/reports/${type}/csv`, {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/reports/${type}/csv`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(response => response.blob())

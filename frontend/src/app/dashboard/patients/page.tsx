@@ -50,7 +50,7 @@ export default function PatientsPage() {
   const fetchPatients = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('http://127.0.0.1:4000/api/patients', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/patients`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -70,8 +70,8 @@ export default function PatientsPage() {
     const token = localStorage.getItem('token');
     const isEdit = !!patientData.id;
     const url = isEdit 
-      ? `http://127.0.0.1:4000/api/patients/${patientData.id}` 
-      : 'http://127.0.0.1:4000/api/patients';
+      ? `${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/patients/${patientData.id}` 
+      : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/patients`;
       
     const res = await fetch(url, {
       method: isEdit ? 'PUT' : 'POST',
@@ -96,7 +96,7 @@ export default function PatientsPage() {
     if (!patientToDelete) return;
     const token = localStorage.getItem('token');
     try {
-      const res = await fetch(`http://127.0.0.1:4000/api/patients/${patientToDelete.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/patients/${patientToDelete.id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
