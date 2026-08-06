@@ -53,7 +53,7 @@ router.get('/inventory/csv', async (req, res) => {
     // Normalize into a single inventory list
     const combined = [
       ...medicines.map(m => ({ Type: 'Medicine', Name: m.name, Status: m.status, Quantity: m.quantity, Unit: m.unit, Expiry: m.expiryDate })),
-      ...equipment.map(e => ({ Type: 'Equipment', Name: e.name, Status: e.status, Quantity: 1, Unit: 'item', Expiry: null }))
+      ...equipment.map(e => ({ Type: 'Equipment', Name: e.name, Status: e.condition, Quantity: 1, Unit: 'item', Expiry: null }))
     ];
     
     const csv = toCSV(combined);

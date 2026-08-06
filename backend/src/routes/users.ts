@@ -131,7 +131,8 @@ router.post('/', requireAuth, async (req: any, res: any) => {
     res.status(201).json(user);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      const msg = err.errors?.[0]?.message || err.issues?.[0]?.message || err.message || 'Validation error';
+      const zErr = err as any;
+      const msg = zErr.errors?.[0]?.message || zErr.issues?.[0]?.message || err.message || 'Validation error';
       return res.status(400).json({ error: msg });
     }
     res.status(500).json({ error: 'Internal server error' });
@@ -187,7 +188,8 @@ router.put('/:id', requireAuth, async (req: any, res: any) => {
     res.json(user);
   } catch (err: any) {
     if (err instanceof z.ZodError) {
-      const msg = err.errors?.[0]?.message || err.issues?.[0]?.message || err.message || 'Validation error';
+      const zErr = err as any;
+      const msg = zErr.errors?.[0]?.message || zErr.issues?.[0]?.message || err.message || 'Validation error';
       return res.status(400).json({ error: msg });
     }
     res.status(500).json({ error: 'Internal server error' });

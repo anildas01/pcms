@@ -54,7 +54,7 @@ const equipmentSchema = z.object({
   type: z.string().min(1),
   quantity: z.number().int().optional(),
   condition: z.string().optional(),
-  conditions: z.record(z.number().int().min(0)).optional(),
+  conditions: z.record(z.string(), z.number().int().min(0)).optional(),
 });
 
 // POST new equipment
@@ -65,7 +65,7 @@ router.post('/', async (req: any, res) => {
 
     if (data.conditions && Object.keys(data.conditions).length > 0) {
       const createdEquipments = [];
-      for (const [cond, qty] of Object.entries(data.conditions)) {
+      for (const [cond, qty] of Object.entries(data.conditions as Record<string, number>)) {
         if (qty > 0) {
           const existing = await prisma.equipment.findFirst({
             where: { name: data.name, type: data.type, condition: cond }

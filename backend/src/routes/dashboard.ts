@@ -40,7 +40,7 @@ router.get('/stats', async (req, res) => {
     });
 
     // 3. Active Equipment (In Use)
-    const activeEquipment = await prisma.equipment.count({
+    const activeEquipment = await prisma.equipmentAssignment.count({
       where: { status: 'In Use' }
     });
 
