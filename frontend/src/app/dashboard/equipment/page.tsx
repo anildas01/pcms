@@ -279,13 +279,10 @@ export default function EquipmentPage() {
                       Type
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Quantity
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Condition
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Available Now
+                      Availability
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Date Added
@@ -298,11 +295,11 @@ export default function EquipmentPage() {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="py-10 text-center text-sm text-gray-500">Loading equipment...</td>
+                      <td colSpan={5} className="py-10 text-center text-sm text-gray-500">Loading equipment...</td>
                     </tr>
                   ) : filteredEquipment.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-10 text-center text-sm text-gray-500">No equipment found matching criteria.</td>
+                      <td colSpan={6} className="py-10 text-center text-sm text-gray-500">No equipment found matching criteria.</td>
                     </tr>
                   ) : (
                     filteredEquipment.map((item: any) => (
@@ -315,24 +312,25 @@ export default function EquipmentPage() {
                             {item.type}
                           </span>
                         </td>
-                        <td data-label="Quantity" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-medium">
-                          {item.quantity}
-                        </td>
                         <td data-label="Condition" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <span className={`font-medium ${item.condition === 'Poor' ? 'text-red-600' : 'text-gray-900'}`}>
                             {item.condition}
                           </span>
                         </td>
-                        <td data-label="Available Now" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td data-label="Availability" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex flex-col">
-                            <span className={`font-semibold ${item.availableNow > 0 ? 'text-green-700' : 'text-red-600'}`}>
-                              {item.availableNow} / {item.quantity} Available
+                            <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset w-fit ${
+                              item.availableNow > 0 
+                                ? 'bg-green-50 text-green-700 ring-green-600/20' 
+                                : 'bg-red-50 text-red-700 ring-red-600/10'
+                            }`}>
+                              {item.availableNow > 0 ? 'Available' : 'In Use'}
                             </span>
                             {item.assignments && item.assignments.length > 0 && (
-                              <div className="mt-1 flex flex-col gap-1">
+                              <div className="mt-2 flex flex-col gap-1">
                                 {item.assignments.map((a: any) => (
-                                  <span key={a.id} className="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full inline-block">
-                                    {a.quantity}x assigned to {a.patient?.name || `Patient ID: ${a.patientId}`}
+                                  <span key={a.id} className="text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded-md inline-block border border-blue-200">
+                                    Assigned to: {a.patient?.name || `Patient ID: ${a.patientId}`}
                                   </span>
                                 ))}
                               </div>
