@@ -125,6 +125,8 @@ model EquipmentAssignment {
   returnedAt  DateTime?
   assignedById Int?
   assignedBy   User?    @relation("EquipmentAssignedBy", fields: [assignedById], references: [id])
+  collectedByName  String?
+  collectedByPhone String?
 }
 
 model Visit {

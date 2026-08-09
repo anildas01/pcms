@@ -205,7 +205,7 @@ router.delete('/:id', async (req: any, res) => {
 router.post('/:id/assign', async (req: any, res) => {
   try {
     const equipmentId = parseInt(req.params.id);
-    const { patientId, quantity, assignedAt, assignedById } = req.body;
+    const { patientId, quantity, assignedAt, assignedById, collectedByName, collectedByPhone } = req.body;
     
     if (!patientId || !quantity) return res.status(400).json({ error: 'Missing patientId or quantity' });
 
@@ -230,7 +230,9 @@ router.post('/:id/assign', async (req: any, res) => {
         quantity,
         status: 'In Use',
         ...(assignedAt && { assignedAt: new Date(assignedAt) }),
-        ...(assignedById && { assignedById })
+        ...(assignedById && { assignedById }),
+        ...(collectedByName && { collectedByName }),
+        ...(collectedByPhone && { collectedByPhone })
       }
     });
 

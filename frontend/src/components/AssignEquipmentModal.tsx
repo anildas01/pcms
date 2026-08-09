@@ -18,6 +18,8 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
   const [equipmentId, setEquipmentId] = useState<number | null>(null);
   const [patientId, setPatientId] = useState<number | null>(null);
   const [assignedById, setAssignedById] = useState<number | null>(null);
+  const [collectedByName, setCollectedByName] = useState<string>('');
+  const [collectedByPhone, setCollectedByPhone] = useState<string>('');
   const quantity = 1;
   const [assignedAt, setAssignedAt] = useState<string>(new Date().toISOString().split('T')[0]);
   const [patients, setPatients] = useState<any[]>([]);
@@ -149,7 +151,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ patientId, quantity, assignedAt, assignedById })
+        body: JSON.stringify({ patientId, quantity, assignedAt, assignedById, collectedByName: collectedByName || undefined, collectedByPhone: collectedByPhone || undefined })
       });
 
       if (res.ok) {
@@ -230,6 +232,28 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
                 value={assignedById || ''}
                 onChange={(val) => setAssignedById(val as number)}
                 placeholder="Search staff/volunteer..."
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">Collected By Name (Optional)</label>
+              <input 
+                type="text" 
+                value={collectedByName}
+                onChange={(e) => setCollectedByName(e.target.value)}
+                placeholder="Name of person collecting"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">Collected By Phone (Optional)</label>
+              <input 
+                type="text" 
+                value={collectedByPhone}
+                onChange={(e) => setCollectedByPhone(e.target.value)}
+                placeholder="Phone number"
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600"
               />
             </div>
 
