@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Option {
-  value: number;
+  value: number | string;
   label: string;
 }
 
 interface Props {
   options: Option[];
-  value: number | '';
-  onChange: (val: number | '') => void;
+  value: number | string | '';
+  onChange: (val: any) => void;
   placeholder?: string;
   required?: boolean;
 }
