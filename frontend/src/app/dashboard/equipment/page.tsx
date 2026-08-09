@@ -202,68 +202,70 @@ export default function EquipmentPage() {
 
   return (
     <div>
-      <div className="sm:flex sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Equipment Inventory</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Track all durable medical equipment (DME), check their status, and manage maintenance logs.
-          </p>
+      <div className="sticky top-[-24px] z-20 bg-gray-50 pb-4 pt-6 -mt-6 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 border-b border-gray-200">
+        <div className="sm:flex sm:items-center sm:justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Equipment Inventory</h1>
+            <p className="mt-2 text-sm text-gray-700">
+              Track all durable medical equipment (DME), check their status, and manage maintenance logs.
+            </p>
+          </div>
+          <div className="mt-4 sm:mt-0 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={downloadCSV}
+              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <Download className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+              Download CSV
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsReturnModalOpen(true)}
+              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <Undo2 className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+              Return Equipment
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsAssignModalOpen(true)}
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <ArrowRightLeft className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Assign
+            </button>
+            <button
+              type="button"
+              onClick={openAddModal}
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Add Equipment
+            </button>
+          </div>
         </div>
-        <div className="mt-4 sm:mt-0 flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={downloadCSV}
-            className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <Download className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
-            Download CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsReturnModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <Undo2 className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
-            Return Equipment
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsAssignModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <ArrowRightLeft className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Assign
-          </button>
-          <button
-            type="button"
-            onClick={openAddModal}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Add Equipment
-          </button>
+
+        <div className="sm:flex sm:items-center">
+          <div className="w-full sm:max-w-xs">
+            <label htmlFor="filterName" className="sr-only">Filter by Equipment Name</label>
+            <select
+              id="filterName"
+              name="filterName"
+              value={filterName}
+              onChange={(e) => setFilterName(e.target.value)}
+              className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm shadow-sm border text-gray-900"
+            >
+              <option value="">All Equipment</option>
+              {uniqueNames.map(name => (
+                <option key={name} value={name}>{name}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="mt-4 sm:flex sm:items-center mb-4">
-        <div className="w-full sm:max-w-xs">
-          <label htmlFor="filterName" className="sr-only">Filter by Equipment Name</label>
-          <select
-            id="filterName"
-            name="filterName"
-            value={filterName}
-            onChange={(e) => setFilterName(e.target.value)}
-            className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm shadow-sm border text-gray-900"
-          >
-            <option value="">All Equipment</option>
-            {uniqueNames.map(name => (
-              <option key={name} value={name}>{name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col">
+      <div className="mt-6 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg bg-white border border-gray-100">

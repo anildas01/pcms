@@ -196,51 +196,53 @@ export default function MedicinesPage() {
 
   return (
     <div>
-      <div className="sm:flex sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Medicine Inventory</h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Track your medical supplies, stock levels, and expiration dates.
-          </p>
-        </div>
-        <div className="mt-4 sm:mt-0 flex flex-wrap gap-2 items-center">
-          <select 
-            value={typeFilter} 
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
-          >
-            <option className="text-black" value="All">All Types</option>
-            <option className="text-black" value="Medicine">Medicine</option>
-            <option className="text-black" value="Medical Supplies">Medical Supplies</option>
-          </select>
-          <button
-            type="button"
-            onClick={downloadCSV}
-            className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <Download className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
-            Download CSV
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsUsageModalOpen(true)}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <Stethoscope className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Add Usage
-          </button>
-          <button
-            type="button"
-            onClick={openAddModal}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
-          >
-            <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
-            Add Item
-          </button>
+      <div className="sticky top-[-24px] z-20 bg-gray-50 pb-4 pt-6 -mt-6 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 border-b border-gray-200">
+        <div className="sm:flex sm:items-center sm:justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-semibold text-gray-900">Medicine Inventory</h1>
+            <p className="mt-2 text-sm text-gray-700">
+              Track your medical supplies, stock levels, and expiration dates.
+            </p>
+          </div>
+          <div className="mt-4 sm:mt-0 flex flex-wrap gap-2 items-center">
+            <select 
+              value={typeFilter} 
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-black shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500"
+            >
+              <option className="text-black" value="All">All Types</option>
+              <option className="text-black" value="Medicine">Medicine</option>
+              <option className="text-black" value="Medical Supplies">Medical Supplies</option>
+            </select>
+            <button
+              type="button"
+              onClick={downloadCSV}
+              className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <Download className="-ml-1 mr-2 h-5 w-5 text-gray-500" aria-hidden="true" />
+              Download CSV
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsUsageModalOpen(true)}
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-teal-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <Stethoscope className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Add Usage
+            </button>
+            <button
+              type="button"
+              onClick={openAddModal}
+              className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            >
+              <Plus className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
+              Add Item
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="mt-8 flex flex-col">
+      <div className="mt-6 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg bg-white border border-gray-100">
