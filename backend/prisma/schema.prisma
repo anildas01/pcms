@@ -209,7 +209,7 @@ model Vehicle {
 
 model Supplier {
   id             Int             @id @default(autoincrement())
-  name           String
+  name           String          @unique
   contactPerson  String?
   phone          String?
   email          String?
@@ -271,10 +271,4 @@ model Setting {
   key       String   @unique
   value     String
   updatedAt DateTime @updatedAt
-}
-
-model Supplier {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  createdAt DateTime @default(now())
 }
