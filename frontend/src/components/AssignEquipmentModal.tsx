@@ -5,6 +5,7 @@ import { X, Plus } from 'lucide-react';
 import SearchableSelect from './SearchableSelect';
 import { toast } from 'sonner';
 import PatientModal from './PatientModal';
+import UserModal from './UserModal';
 
 interface AssignEquipmentModalProps {
   isOpen: boolean;
@@ -16,11 +17,14 @@ interface AssignEquipmentModalProps {
 export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, availableEquipment }: AssignEquipmentModalProps) {
   const [equipmentId, setEquipmentId] = useState<number | null>(null);
   const [patientId, setPatientId] = useState<number | null>(null);
+  const [assignedById, setAssignedById] = useState<number | null>(null);
   const quantity = 1;
   const [assignedAt, setAssignedAt] = useState<string>(new Date().toISOString().split('T')[0]);
   const [patients, setPatients] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
 
   const fetchPatients = async () => {
     const token = localStorage.getItem('token');
@@ -37,9 +41,25 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
     }
   };
 
+  const fetchUsers = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/users`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       fetchPatients();
+      fetchUsers();
     }
   }, [isOpen]);
 
@@ -67,6 +87,30 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
     }
   };
 
+  const handleUserSaved = async (userData: any) => {
+    const token = localStorage.getItem('token');
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(userData)
+    });
+
+    if (res.ok) {
+      const newUser = await res.json();
+      setUsers(prev => [newUser, ...prev]);
+      setAssignedById(newUser.id);
+      setIsUserModalOpen(false);
+      toast.success("User created successfully!");
+    } else {
+      const errorData = await res.json();
+      toast.error(`Failed to create user: ${errorData.error || 'Unknown error'}`);
+      throw new Error('Failed to save user');
+    }
+  };
+
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,7 +132,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ patientId, quantity, assignedAt })
+        body: JSON.stringify({ patientId, quantity, assignedAt, assignedById })
       });
 
       if (res.ok) {
@@ -153,6 +197,25 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
             </div>
 
             <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-900">Assigned By (Optional)</label>
+                <button 
+                  type="button" 
+                  onClick={() => setIsUserModalOpen(true)}
+                  className="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800"
+                >
+                  <Plus className="h-3 w-3 mr-1" /> Add New
+                </button>
+              </div>
+              <SearchableSelect
+                options={users.map(u => ({ value: u.id, label: `${u.name} (${u.role?.name || u.roleId})` }))}
+                value={assignedById || ''}
+                onChange={(val) => setAssignedById(val as number)}
+                placeholder="Search staff/volunteer..."
+              />
+            </div>
+
+            <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">Assigned Date</label>
               <input 
                 type="date" 
@@ -182,6 +245,14 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
           isOpen={isPatientModalOpen} 
           onClose={() => setIsPatientModalOpen(false)} 
           onSave={handlePatientSaved} 
+        />
+      )}
+
+      {isUserModalOpen && (
+        <UserModal 
+          isOpen={isUserModalOpen} 
+          onClose={() => setIsUserModalOpen(false)} 
+          onSave={handleUserSaved} 
         />
       )}
     </div>

@@ -22,6 +22,7 @@ model User {
   visits              Visit[]
   attendances         Attendance[]
   notifications       Notification[]
+  equipmentAssigned   EquipmentAssignment[] @relation("EquipmentAssignedBy")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   permissions         String?  @default("[]")
@@ -120,6 +121,8 @@ model EquipmentAssignment {
   status      String   @default("In Use") // In Use, Returned
   assignedAt  DateTime @default(now())
   returnedAt  DateTime?
+  assignedById Int?
+  assignedBy   User?    @relation("EquipmentAssignedBy", fields: [assignedById], references: [id])
 }
 
 model Visit {
