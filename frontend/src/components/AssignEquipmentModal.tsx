@@ -16,7 +16,7 @@ interface AssignEquipmentModalProps {
 export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, availableEquipment }: AssignEquipmentModalProps) {
   const [equipmentId, setEquipmentId] = useState<number | null>(null);
   const [patientId, setPatientId] = useState<number | null>(null);
-  const [quantity, setQuantity] = useState<number>(1);
+  const quantity = 1;
   const [patients, setPatients] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
@@ -150,18 +150,6 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
                 placeholder="Search patient..."
               />
             </div>
-
-            {equipmentId && (
-              <div>
-                <label className="mb-2 block text-sm font-medium text-gray-900">Quantity to Assign</label>
-                <input type="number" required min="1"
-                  max={availableEquipment.find(eq => eq.id === equipmentId)?.availableNow || 1}
-                  value={quantity} onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
-                />
-                <p className="mt-1 text-xs text-gray-500">Max available: {availableEquipment.find(eq => eq.id === equipmentId)?.availableNow}</p>
-              </div>
-            )}
           </div>
           
           <div className="flex items-center space-x-3 rounded-b border-t border-gray-200 pt-4">
