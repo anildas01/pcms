@@ -124,6 +124,9 @@ export default function ReturnEquipmentModal({ isOpen, onClose, onSuccess, inUse
                 {selectedAssignment.assignedBy && (
                   <p className="text-sm text-blue-700 mt-1 font-medium">Assigned By: {selectedAssignment.assignedBy.name}</p>
                 )}
+                {selectedAssignment.collectedByName && (
+                  <p className="text-sm text-blue-700 mt-1 font-medium">Collected By: {selectedAssignment.collectedByName} {selectedAssignment.collectedByPhone ? `(${selectedAssignment.collectedByPhone})` : ''}</p>
+                )}
                 <p className="text-sm text-blue-700 mt-1 font-medium">Quantity to Return: {selectedAssignment.quantity}</p>
                 <div className="mt-4">
                   <label className="mb-2 block text-sm font-medium text-blue-900">Return Condition</label>

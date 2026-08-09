@@ -236,9 +236,10 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Collected By Name (Optional)</label>
+              <label className="mb-2 block text-sm font-medium text-gray-900">Collected By Name</label>
               <input 
                 type="text" 
+                required
                 value={collectedByName}
                 onChange={(e) => setCollectedByName(e.target.value)}
                 placeholder="Name of person collecting"
@@ -247,9 +248,10 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
             </div>
 
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900">Collected By Phone (Optional)</label>
+              <label className="mb-2 block text-sm font-medium text-gray-900">Collected By Phone</label>
               <input 
                 type="text" 
+                required
                 value={collectedByPhone}
                 onChange={(e) => setCollectedByPhone(e.target.value)}
                 placeholder="Phone number"
