@@ -12,6 +12,8 @@ interface Medicine {
   unit?: string;
   expiryDate?: string;
   status?: string;
+  purchaseDate?: string;
+  purchasePrice?: number | string;
 }
 
 interface MedicineModalProps {
@@ -31,7 +33,9 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
       type: 'Medicine',
       unit: 'units',
       expiryDate: '',
-      status: 'In Stock'
+      status: 'In Stock',
+      purchaseDate: '',
+      purchasePrice: ''
     }
   );
   const [isNewSupplier, setIsNewSupplier] = useState(false);
@@ -43,7 +47,7 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === 'quantity' ? parseInt(value) || 0 : value
+      [name]: name === 'quantity' ? parseInt(value) || 0 : (name === 'purchasePrice' ? parseFloat(value) || '' : value)
     }));
   };
 
@@ -51,10 +55,11 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      // If expiryDate is empty string, convert to undefined so Zod/Prisma accepts it
       const submissionData = {
         ...formData,
-        expiryDate: formData.expiryDate ? formData.expiryDate : undefined
+        expiryDate: formData.expiryDate ? formData.expiryDate : undefined,
+        purchaseDate: formData.purchaseDate ? formData.purchaseDate : undefined,
+        purchasePrice: formData.purchasePrice ? Number(formData.purchasePrice) : undefined
       };
       await onSave(submissionData);
       onClose();
@@ -174,6 +179,24 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
                   </button>
                 </div>
               )}
+            </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="purchaseDate" className="mb-2 block text-sm font-medium text-gray-900">Purchase Date</label>
+                <input type="date" name="purchaseDate" id="purchaseDate" 
+                  value={formData.purchaseDate || ''} onChange={handleChange}
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" />
+              </div>
+              
+              <div>
+                <label htmlFor="purchasePrice" className="mb-2 block text-sm font-medium text-gray-900">Purchase Price</label>
+                <input type="number" step="0.01" min="0" name="purchasePrice" id="purchasePrice" 
+                  value={formData.purchasePrice || ''} onChange={handleChange}
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
+                  placeholder="0.00" />
+              </div>
             </div>
 
           </div>

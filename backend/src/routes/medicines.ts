@@ -41,6 +41,8 @@ const medicineSchema = z.object({
   unit: z.string().default('units'),
   type: z.string().default('Medicine'),
   expiryDate: z.string().optional().transform((val) => val ? new Date(val) : null),
+  purchaseDate: z.string().optional().transform((val) => val ? new Date(val) : null),
+  purchasePrice: z.number().nonnegative().optional(),
   status: z.string().optional(),
   reason: z.string().optional()
 });

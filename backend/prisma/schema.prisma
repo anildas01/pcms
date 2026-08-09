@@ -94,6 +94,8 @@ model Medicine {
   type        String   @default("Medicine")
   expiryDate  DateTime?
   status      String   @default("In Stock") // In Stock, Low Stock, Out of Stock
+  purchaseDate DateTime?
+  purchasePrice Float?
   visits      VisitMedicine[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
