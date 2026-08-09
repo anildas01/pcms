@@ -5,6 +5,7 @@ import { Plus, Edit, Trash2, ShieldAlert, CheckCircle2, Wrench, AlertTriangle, A
 import EquipmentModal from '@/components/EquipmentModal';
 import AssignEquipmentModal from '@/components/AssignEquipmentModal';
 import ReturnEquipmentModal from '@/components/ReturnEquipmentModal';
+import ExportEquipmentModal from '@/components/ExportEquipmentModal';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -40,6 +41,7 @@ export default function EquipmentPage() {
 
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
   // Delete Confirmation State
   const [equipmentToDelete, setEquipmentToDelete] = useState<Equipment | null>(null);
@@ -161,41 +163,10 @@ export default function EquipmentPage() {
 
   const downloadCSV = () => {
     if (equipment.length === 0) {
-      toast.error('No equipment data to download');
+      toast.error('No equipment data to export');
       return;
     }
-
-    const headers = ['ID', 'Name', 'Type', 'Condition', 'Quantity', 'Available Now', 'Assigned To', 'Date Added'];
-    const csvRows = [headers.join(',')];
-
-    equipment.forEach(item => {
-      const assignedTo = item.assignments && item.assignments.length > 0
-        ? item.assignments.map((a: any) => `${a.quantity}x to ${a.patient?.name || `ID: ${a.patientId}`}`).join('; ')
-        : 'None';
-      
-      const row = [
-        item.id,
-        `"${item.name}"`,
-        `"${item.type}"`,
-        `"${item.condition}"`,
-        item.quantity,
-        item.availableNow,
-        `"${assignedTo}"`,
-        `"${item.createdAt ? new Date(item.createdAt).toLocaleString() : ''}"`
-      ];
-      csvRows.push(row.join(','));
-    });
-
-    const csvContent = csvRows.join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `equipment_inventory_${new Date().toISOString().split('T')[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success('Download started!');
+    setIsExportModalOpen(true);
   };
 
   const uniqueNames = Array.from(new Set(equipment.map((eq: any) => eq.name))).sort() as string[];
@@ -417,6 +388,12 @@ export default function EquipmentPage() {
           inUseEquipment={equipment.filter(e => e.assignments && e.assignments.length > 0)}
         />
       )}
+
+      <ExportEquipmentModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        equipmentData={equipment}
+      />
 
       {/* Delete Confirmation Modal using Shadcn */}
       <AlertDialog open={!!equipmentToDelete} onOpenChange={(open) => {
