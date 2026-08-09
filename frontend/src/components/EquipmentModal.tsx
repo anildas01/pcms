@@ -46,6 +46,10 @@ export default function EquipmentModal({ isOpen, onClose, onSave, initialData }:
 
   const handleAddItem = () => {
     if (!newNumber.trim()) return;
+    if (items.some(item => item.type.toLowerCase() === newNumber.trim().toLowerCase())) {
+      alert("This equipment number has already been added to the list.");
+      return;
+    }
     setItems([...items, { type: newNumber.trim(), condition: newCondition }]);
     setNewNumber('');
     setNewCondition('Good');
@@ -131,12 +135,12 @@ export default function EquipmentModal({ isOpen, onClose, onSave, initialData }:
                     <input type="text" value={newNumber} onChange={(e) => setNewNumber(e.target.value)} 
                       onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); handleAddItem(); } }}
                       placeholder="e.g. WC-001"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-gray-900" />
                   </div>
                   <div>
                     <label className="block text-xs text-gray-700 mb-1">Condition</label>
                     <select value={newCondition} onChange={(e) => setNewCondition(e.target.value)}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
+                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-gray-900">
                       <option value="Excellent">Excellent</option>
                       <option value="Good">Good</option>
                       <option value="Fair">Fair</option>
