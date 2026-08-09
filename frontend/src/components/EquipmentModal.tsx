@@ -115,87 +115,89 @@ export default function EquipmentModal({ isOpen, onClose, onSave, initialData }:
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-5 overflow-y-auto flex-grow">
-          <div className="grid gap-4 mb-4">
-            <div>
-              <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-900">Equipment Name</label>
-              <input type="text" name="name" id="name" required
-                value={name} onChange={(e) => setName(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
-                placeholder="e.g. Wheelchair, Oxygen Concentrator" />
-            </div>
+        <form onSubmit={handleSubmit} className="flex flex-col min-h-0 flex-grow">
+          <div className="p-4 sm:p-5 overflow-y-auto">
+            <div className="grid gap-4 mb-4">
+              <div>
+                <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-900">Equipment Name</label>
+                <input type="text" name="name" id="name" required
+                  value={name} onChange={(e) => setName(e.target.value)}
+                  className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
+                  placeholder="e.g. Wheelchair, Oxygen Concentrator" />
+              </div>
 
-            {!initialData ? (
-              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                <h4 className="text-sm font-medium text-gray-900 mb-3">Add Equipment Numbers</h4>
-                
-                <div className="flex gap-2 items-end mb-4">
-                  <div className="flex-grow">
-                    <label className="block text-xs text-gray-700 mb-1">Equipment Number / ID</label>
-                    <input type="text" value={newNumber} onChange={(e) => setNewNumber(e.target.value)} 
-                      onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); handleAddItem(); } }}
-                      placeholder="e.g. WC-001"
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-gray-900" />
+              {!initialData ? (
+                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 flex flex-col min-h-0">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Add Equipment Numbers</h4>
+                  
+                  <div className="flex gap-2 items-end mb-4 shrink-0">
+                    <div className="flex-grow">
+                      <label className="block text-xs text-gray-700 mb-1">Equipment Number / ID</label>
+                      <input type="text" value={newNumber} onChange={(e) => setNewNumber(e.target.value)} 
+                        onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); handleAddItem(); } }}
+                        placeholder="e.g. WC-001"
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-gray-900" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-700 mb-1">Condition</label>
+                      <select value={newCondition} onChange={(e) => setNewCondition(e.target.value)}
+                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-gray-900">
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+                      </select>
+                    </div>
+                    <button type="button" onClick={handleAddItem} disabled={!newNumber.trim()}
+                      className="shrink-0 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 flex items-center h-[38px]">
+                      <Plus className="h-4 w-4" /> Add
+                    </button>
+                  </div>
+
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {items.length === 0 ? (
+                      <p className="text-xs text-gray-500 italic text-center py-2">No equipment numbers added yet.</p>
+                    ) : (
+                      items.map((item, idx) => (
+                        <div key={idx} className="flex justify-between items-center bg-white border border-gray-200 p-2 rounded text-sm">
+                          <div>
+                            <span className="font-medium text-gray-900">{item.type}</span>
+                            <span className="text-gray-500 ml-2">({item.condition})</span>
+                          </div>
+                          <button type="button" onClick={() => handleRemoveItem(idx)} className="text-red-500 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="mb-2 block text-sm font-medium text-gray-900">Equipment Number / ID</label>
+                    <input type="text" required
+                      value={editNumber} onChange={(e) => setEditNumber(e.target.value)}
+                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
+                      placeholder="e.g. WC-001" />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-700 mb-1">Condition</label>
-                    <select value={newCondition} onChange={(e) => setNewCondition(e.target.value)}
-                      className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border text-gray-900">
+                    <label className="mb-2 block text-sm font-medium text-gray-900">Condition</label>
+                    <select value={editCondition} onChange={(e) => setEditCondition(e.target.value)}
+                      className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
                       <option value="Excellent">Excellent</option>
                       <option value="Good">Good</option>
                       <option value="Fair">Fair</option>
                       <option value="Poor">Poor</option>
                     </select>
                   </div>
-                  <button type="button" onClick={handleAddItem} disabled={!newNumber.trim()}
-                    className="shrink-0 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 flex items-center h-[38px]">
-                    <Plus className="h-4 w-4" /> Add
-                  </button>
-                </div>
+                </>
+              )}
 
-                <div className="space-y-2">
-                  {items.length === 0 ? (
-                    <p className="text-xs text-gray-500 italic text-center py-2">No equipment numbers added yet.</p>
-                  ) : (
-                    items.map((item, idx) => (
-                      <div key={idx} className="flex justify-between items-center bg-white border border-gray-200 p-2 rounded text-sm">
-                        <div>
-                          <span className="font-medium text-gray-900">{item.type}</span>
-                          <span className="text-gray-500 ml-2">({item.condition})</span>
-                        </div>
-                        <button type="button" onClick={() => handleRemoveItem(idx)} className="text-red-500 hover:text-red-700">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            ) : (
-              <>
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-900">Equipment Number / ID</label>
-                  <input type="text" required
-                    value={editNumber} onChange={(e) => setEditNumber(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
-                    placeholder="e.g. WC-001" />
-                </div>
-                <div>
-                  <label className="mb-2 block text-sm font-medium text-gray-900">Condition</label>
-                  <select value={editCondition} onChange={(e) => setEditCondition(e.target.value)}
-                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500">
-                    <option value="Excellent">Excellent</option>
-                    <option value="Good">Good</option>
-                    <option value="Fair">Fair</option>
-                    <option value="Poor">Poor</option>
-                  </select>
-                </div>
-              </>
-            )}
-
+            </div>
           </div>
           
-          <div className="flex items-center space-x-3 rounded-b border-t border-gray-200 pt-4 mt-4 sticky bottom-0 bg-white">
+          <div className="flex items-center space-x-3 rounded-b-lg border-t border-gray-200 p-4 sm:p-5 bg-gray-50 shrink-0">
             <button type="submit" disabled={isSubmitting}
               className="rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50">
               {isSubmitting ? 'Saving...' : (initialData ? 'Save Changes' : `Save ${items.length > 0 ? items.length : ''} Equipment`)}
