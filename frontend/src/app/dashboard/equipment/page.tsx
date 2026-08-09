@@ -45,6 +45,7 @@ export default function EquipmentPage() {
   const [equipmentToDelete, setEquipmentToDelete] = useState<Equipment | null>(null);
   const [deleteKeyword, setDeleteKeyword] = useState('');
   const [filterName, setFilterName] = useState<string>('');
+  const [filterStatus, setFilterStatus] = useState<string>('All');
 
   useEffect(() => {
     fetchEquipment();
@@ -198,7 +199,16 @@ export default function EquipmentPage() {
   };
 
   const uniqueNames = Array.from(new Set(equipment.map((eq: any) => eq.name))).sort() as string[];
-  const filteredEquipment = equipment.filter((eq: any) => filterName === '' || eq.name === filterName);
+  const filteredEquipment = equipment.filter((eq: any) => {
+    const nameMatch = filterName === '' || eq.name === filterName;
+    const isAvailable = eq.availableNow > 0;
+    const statusMatch = filterStatus === 'All' 
+      ? true 
+      : filterStatus === 'Available' 
+        ? isAvailable 
+        : !isAvailable;
+    return nameMatch && statusMatch;
+  });
 
   return (
     <div>
@@ -246,8 +256,8 @@ export default function EquipmentPage() {
           </div>
         </div>
 
-        <div className="sm:flex sm:items-center">
-          <div className="w-full sm:max-w-xs">
+        <div className="sm:flex sm:items-center gap-4">
+          <div className="w-full sm:max-w-xs mb-2 sm:mb-0">
             <label htmlFor="filterName" className="sr-only">Filter by Equipment Name</label>
             <select
               id="filterName"
@@ -260,6 +270,20 @@ export default function EquipmentPage() {
               {uniqueNames.map(name => (
                 <option key={name} value={name}>{name}</option>
               ))}
+            </select>
+          </div>
+          <div className="w-full sm:max-w-xs">
+            <label htmlFor="filterStatus" className="sr-only">Filter by Status</label>
+            <select
+              id="filterStatus"
+              name="filterStatus"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm shadow-sm border text-gray-900"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Available">Available</option>
+              <option value="Assigned">Assigned / In Use</option>
             </select>
           </div>
         </div>
