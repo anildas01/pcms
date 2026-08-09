@@ -44,6 +44,7 @@ export default function EquipmentPage() {
   // Delete Confirmation State
   const [equipmentToDelete, setEquipmentToDelete] = useState<Equipment | null>(null);
   const [deleteKeyword, setDeleteKeyword] = useState('');
+  const [filterName, setFilterName] = useState<string>('');
 
   useEffect(() => {
     fetchEquipment();
@@ -196,6 +197,9 @@ export default function EquipmentPage() {
     toast.success('Download started!');
   };
 
+  const uniqueNames = Array.from(new Set(equipment.map((eq: any) => eq.name))).sort() as string[];
+  const filteredEquipment = equipment.filter((eq: any) => filterName === '' || eq.name === filterName);
+
   return (
     <div>
       <div className="sm:flex sm:items-center sm:justify-between mb-8">
@@ -241,7 +245,25 @@ export default function EquipmentPage() {
         </div>
       </div>
 
-      <div className="mt-8 flex flex-col">
+      <div className="mt-4 sm:flex sm:items-center mb-4">
+        <div className="w-full sm:max-w-xs">
+          <label htmlFor="filterName" className="sr-only">Filter by Equipment Name</label>
+          <select
+            id="filterName"
+            name="filterName"
+            value={filterName}
+            onChange={(e) => setFilterName(e.target.value)}
+            className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm shadow-sm border text-gray-900"
+          >
+            <option value="">All Equipment</option>
+            {uniqueNames.map(name => (
+              <option key={name} value={name}>{name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg bg-white border border-gray-100">
@@ -276,12 +298,12 @@ export default function EquipmentPage() {
                     <tr>
                       <td colSpan={6} className="py-10 text-center text-sm text-gray-500">Loading equipment...</td>
                     </tr>
-                  ) : equipment.length === 0 ? (
+                  ) : filteredEquipment.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-10 text-center text-sm text-gray-500">No equipment found. Click 'Add Equipment' to get started.</td>
+                      <td colSpan={7} className="py-10 text-center text-sm text-gray-500">No equipment found matching criteria.</td>
                     </tr>
                   ) : (
-                    equipment.map((item: any) => (
+                    filteredEquipment.map((item: any) => (
                       <tr key={item.id}>
                         <td data-label="Equipment Name" className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                           {item.name}
