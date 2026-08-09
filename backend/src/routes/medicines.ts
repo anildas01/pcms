@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 
 const medicineSchema = z.object({
   name: z.string().min(1),
-  description: z.string().optional(),
+  supplier: z.string().optional(),
   quantity: z.number().int().nonnegative(),
   unit: z.string().default('units'),
   type: z.string().default('Medicine'),

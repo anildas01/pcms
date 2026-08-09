@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 interface Medicine {
   id: number;
   name: string;
-  description?: string;
+  supplier?: string;
   quantity: number;
   type: string;
   expiryDate?: string;
@@ -339,6 +339,7 @@ export default function MedicinesPage() {
           onClose={() => setIsModalOpen(false)} 
           onSave={handleSaveMedicine}
           initialData={editingMedicine}
+          knownSuppliers={Array.from(new Set(medicines.map(m => m.supplier).filter(Boolean))) as string[]}
         />
       )}
 

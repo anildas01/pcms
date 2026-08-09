@@ -6,7 +6,7 @@ import { X } from 'lucide-react';
 interface Medicine {
   id?: number;
   name: string;
-  description?: string;
+  supplier?: string;
   quantity: number;
   type: string;
   unit?: string;
@@ -19,13 +19,14 @@ interface MedicineModalProps {
   onClose: () => void;
   onSave: (medicine: Medicine) => Promise<void>;
   initialData?: Medicine | null;
+  knownSuppliers?: string[];
 }
 
-export default function MedicineModal({ isOpen, onClose, onSave, initialData }: MedicineModalProps) {
+export default function MedicineModal({ isOpen, onClose, onSave, initialData, knownSuppliers = [] }: MedicineModalProps) {
   const [formData, setFormData] = useState<Medicine>(
     initialData || {
       name: '',
-      description: '',
+      supplier: '',
       quantity: 0,
       type: 'Medicine',
       unit: 'units',
@@ -33,6 +34,7 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData }: 
       status: 'In Stock'
     }
   );
+  const [isNewSupplier, setIsNewSupplier] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
@@ -122,11 +124,56 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData }: 
 
 
             <div className="sm:col-span-2">
-              <label htmlFor="description" className="mb-2 block text-sm font-medium text-gray-900">Description / Notes</label>
-              <textarea name="description" id="description" rows={3}
-                value={formData.description} onChange={handleChange}
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500" 
-                placeholder="Write any details about the batch or supplier here..."></textarea>
+              <label htmlFor="supplier" className="mb-2 block text-sm font-medium text-gray-900">Supplier</label>
+              
+              {!isNewSupplier ? (
+                <div className="flex gap-2">
+                  <select 
+                    name="supplier" 
+                    id="supplier"
+                    value={formData.supplier || ''} 
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="">Select a supplier...</option>
+                    {knownSuppliers.map((supplierName, idx) => (
+                      <option key={idx} value={supplierName}>{supplierName}</option>
+                    ))}
+                  </select>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsNewSupplier(true);
+                      setFormData(prev => ({ ...prev, supplier: '' }));
+                    }}
+                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    + Add New
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    name="supplier" 
+                    id="supplier"
+                    value={formData.supplier || ''} 
+                    onChange={handleChange}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500" 
+                    placeholder="Enter new supplier name..." 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsNewSupplier(false);
+                      setFormData(prev => ({ ...prev, supplier: '' }));
+                    }}
+                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>

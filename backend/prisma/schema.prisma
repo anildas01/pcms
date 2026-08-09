@@ -87,7 +87,7 @@ model AuditLog {
 model Medicine {
   id          Int      @id @default(autoincrement())
   name        String
-  description String?
+  supplier    String?
   quantity    Int
   unit        String   @default("units")
   type        String   @default("Medicine")
