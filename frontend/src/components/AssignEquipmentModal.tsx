@@ -22,6 +22,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
   const [assignedAt, setAssignedAt] = useState<string>(new Date().toISOString().split('T')[0]);
   const [patients, setPatients] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [roles, setRoles] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -56,10 +57,26 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
     }
   };
 
+  const fetchRoles = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/settings/roles`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setRoles(data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       fetchPatients();
       fetchUsers();
+      fetchRoles();
     }
   }, [isOpen]);
 
@@ -253,7 +270,8 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
         <UserModal 
           isOpen={isUserModalOpen} 
           onClose={() => setIsUserModalOpen(false)} 
-          onSave={handleUserSaved} 
+          onSave={handleUserSaved}
+          roles={roles}
         />
       )}
     </div>
