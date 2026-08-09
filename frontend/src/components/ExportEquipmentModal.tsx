@@ -103,7 +103,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
       const assignedToStr = activeAssignments.length > 0
         ? activeAssignments.map((a: any) => `${a.quantity}x to ${a.patient?.name || `ID: ${a.patientId}`} (On: ${new Date(a.assignedAt).toLocaleDateString()})`).join('; ')
         : 'None';
-      
+
       const row = [
         item.id,
         `"${item.name}"`,
@@ -151,7 +151,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-900">Select Specific Equipment</label>
             <SearchableSelect
-              options={[{ value: '', label: 'All Equipment' }, ...Array.from(new Set(equipmentData.map(eq => eq.name))).sort().map(name => ({ value: name, label: name }))]}
+              options={[{ value: '', label: 'All' }, ...Array.from(new Set(equipmentData.map(eq => eq.name))).sort().map(name => ({ value: name, label: name }))]}
               value={selectedEquipmentName}
               onChange={(val) => setSelectedEquipmentName(val as string)}
               placeholder="Search equipment..."
@@ -161,7 +161,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">Condition</label>
-              <select 
+              <select
                 value={condition}
                 onChange={(e) => setCondition(e.target.value)}
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
@@ -175,7 +175,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">Assignment Status</label>
-              <select 
+              <select
                 value={assignmentStatus}
                 onChange={(e) => setAssignmentStatus(e.target.value)}
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
@@ -188,9 +188,9 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-900">Assigned By Person (Optional)</label>
+            <label className="mb-2 block text-sm font-medium text-gray-900">Assigned By Person</label>
             <SearchableSelect
-              options={[{ value: '', label: 'Anyone' }, ...users.map(u => ({ value: u.id, label: u.name }))]}
+              options={[{ value: '', label: 'All' }, ...users.map(u => ({ value: u.id, label: u.name }))]}
               value={assignedById || ''}
               onChange={(val) => setAssignedById(val as number || null)}
               placeholder="Search staff..."
@@ -200,7 +200,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">Assigned After</label>
-              <input 
+              <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
@@ -209,7 +209,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
             </div>
             <div>
               <label className="mb-2 block text-sm font-medium text-gray-900">Assigned Before</label>
-              <input 
+              <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -219,7 +219,7 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
           </div>
 
         </div>
-        
+
         <div className="flex items-center space-x-3 rounded-b border-t border-gray-200 p-4 sm:p-5">
           <button type="button" onClick={handleDownload}
             className="inline-flex items-center rounded-lg bg-green-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-green-700">
