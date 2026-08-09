@@ -272,3 +272,9 @@ model Setting {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+model Supplier {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+}

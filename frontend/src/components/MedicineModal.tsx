@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Trash2, Edit2, Plus, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Medicine {
   id?: number;
@@ -16,15 +17,19 @@ interface Medicine {
   purchasePrice?: number | string;
 }
 
+interface Supplier {
+  id: number;
+  name: string;
+}
+
 interface MedicineModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (medicine: Medicine) => Promise<void>;
   initialData?: Medicine | null;
-  knownSuppliers?: string[];
 }
 
-export default function MedicineModal({ isOpen, onClose, onSave, initialData, knownSuppliers = [] }: MedicineModalProps) {
+export default function MedicineModal({ isOpen, onClose, onSave, initialData }: MedicineModalProps) {
   const [formData, setFormData] = useState<Medicine>(
     initialData || {
       name: '',
@@ -38,8 +43,33 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
       purchasePrice: ''
     }
   );
+  
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [isNewSupplier, setIsNewSupplier] = useState(false);
+  const [isEditingSupplier, setIsEditingSupplier] = useState(false);
+  const [newSupplierName, setNewSupplierName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchSuppliers();
+    }
+  }, [isOpen]);
+
+  const fetchSuppliers = async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/suppliers`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setSuppliers(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch suppliers', err);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -49,6 +79,75 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
       ...prev,
       [name]: name === 'quantity' ? parseInt(value) || 0 : (name === 'purchasePrice' ? parseFloat(value) || '' : value)
     }));
+  };
+
+  const handleSaveSupplier = async () => {
+    if (!newSupplierName.trim()) return;
+    const token = localStorage.getItem('token');
+    try {
+      if (isEditingSupplier) {
+        const selectedSupplier = suppliers.find(s => s.name === formData.supplier);
+        if (selectedSupplier) {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/suppliers/${selectedSupplier.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ name: newSupplierName })
+          });
+          if (res.ok) {
+            toast.success("Supplier updated!");
+            setFormData(prev => ({ ...prev, supplier: newSupplierName }));
+            fetchSuppliers();
+          } else {
+            toast.error("Failed to update supplier");
+          }
+        }
+      } else {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/suppliers`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+          body: JSON.stringify({ name: newSupplierName })
+        });
+        if (res.ok) {
+          toast.success("Supplier added!");
+          setFormData(prev => ({ ...prev, supplier: newSupplierName }));
+          fetchSuppliers();
+        } else {
+          toast.error("Failed to add supplier");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred");
+    } finally {
+      setIsNewSupplier(false);
+      setIsEditingSupplier(false);
+      setNewSupplierName('');
+    }
+  };
+
+  const handleDeleteSupplier = async () => {
+    const selectedSupplier = suppliers.find(s => s.name === formData.supplier);
+    if (!selectedSupplier) return;
+    
+    if (confirm(`Are you sure you want to delete supplier "${selectedSupplier.name}"? This action cannot be undone.`)) {
+      const token = localStorage.getItem('token');
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/suppliers/${selectedSupplier.id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          toast.success("Supplier deleted");
+          setFormData(prev => ({ ...prev, supplier: '' }));
+          fetchSuppliers();
+        } else {
+          toast.error("Failed to delete supplier");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error("An error occurred");
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -116,8 +215,6 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
                 placeholder="0" />
             </div>
 
-
-
             <div>
               <label htmlFor="expiryDate" className="mb-2 block text-sm font-medium text-gray-900">Expiry Date</label>
               <input type="date" name="expiryDate" id="expiryDate"
@@ -126,12 +223,10 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
                 className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" />
             </div>
 
-
-
             <div className="sm:col-span-2">
               <label htmlFor="supplier" className="mb-2 block text-sm font-medium text-gray-900">Supplier</label>
               
-              {!isNewSupplier ? (
+              {!isNewSupplier && !isEditingSupplier ? (
                 <div className="flex gap-2">
                   <select 
                     name="supplier" 
@@ -141,42 +236,75 @@ export default function MedicineModal({ isOpen, onClose, onSave, initialData, kn
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
                   >
                     <option value="">Select a supplier...</option>
-                    {knownSuppliers.map((supplierName, idx) => (
-                      <option key={idx} value={supplierName}>{supplierName}</option>
+                    {suppliers.map((s) => (
+                      <option key={s.id} value={s.name}>{s.name}</option>
                     ))}
                   </select>
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      setIsNewSupplier(true);
-                      setFormData(prev => ({ ...prev, supplier: '' }));
-                    }}
-                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    + Add New
-                  </button>
+                  
+                  {formData.supplier ? (
+                    <div className="flex shrink-0 gap-2">
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          setNewSupplierName(formData.supplier || '');
+                          setIsEditingSupplier(true);
+                        }}
+                        className="rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        title="Edit Supplier"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </button>
+                      <button 
+                        type="button" 
+                        onClick={handleDeleteSupplier}
+                        className="rounded-lg border border-red-300 bg-white px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        title="Delete Supplier"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setIsNewSupplier(true);
+                        setNewSupplierName('');
+                      }}
+                      className="shrink-0 inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <Plus className="h-4 w-4 mr-1" /> Add New
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="flex gap-2">
                   <input 
                     type="text" 
-                    name="supplier" 
-                    id="supplier"
-                    value={formData.supplier || ''} 
-                    onChange={handleChange}
+                    value={newSupplierName} 
+                    onChange={(e) => setNewSupplierName(e.target.value)}
                     className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500" 
-                    placeholder="Enter new supplier name..." 
+                    placeholder="Enter supplier name..." 
+                    autoFocus
                   />
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      setIsNewSupplier(false);
-                      setFormData(prev => ({ ...prev, supplier: '' }));
-                    }}
-                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    Cancel
-                  </button>
+                  <div className="flex shrink-0 gap-2">
+                    <button 
+                      type="button" 
+                      onClick={handleSaveSupplier}
+                      className="inline-flex items-center rounded-lg border border-transparent bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <Check className="h-4 w-4 mr-1" /> Save
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setIsNewSupplier(false);
+                        setIsEditingSupplier(false);
+                      }}
+                      className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

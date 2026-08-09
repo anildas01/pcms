@@ -341,7 +341,6 @@ export default function MedicinesPage() {
           onClose={() => setIsModalOpen(false)} 
           onSave={handleSaveMedicine}
           initialData={editingMedicine}
-          knownSuppliers={Array.from(new Set(medicines.map(m => m.supplier).filter(Boolean))) as string[]}
         />
       )}
 
