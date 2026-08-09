@@ -69,29 +69,59 @@ export default function EquipmentPage() {
     }
   };
 
-  const handleSaveEquipment = async (equipmentData: any) => {
+  const handleSaveEquipment = async (equipmentData: any | any[]) => {
     const token = localStorage.getItem('token');
-    const isEdit = !!equipmentData.id;
-    const url = isEdit 
-      ? `${process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}`}/api/equipment/${equipmentData.id}` 
-      : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment`;
-      
-    const res = await fetch(url, {
-      method: isEdit ? 'PUT' : 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(equipmentData)
-    });
-
-    if (res.ok) {
-      toast.success(isEdit ? 'Equipment updated successfully' : 'Equipment added successfully');
-      fetchEquipment();
+    
+    if (Array.isArray(equipmentData)) {
+      // Bulk create
+      try {
+        const promises = equipmentData.map(item => 
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(item)
+          }).then(async res => {
+            if (!res.ok) {
+              const errorData = await res.json();
+              throw new Error(errorData.error || 'Unknown error');
+            }
+          })
+        );
+        
+        await Promise.all(promises);
+        toast.success(`Successfully added ${equipmentData.length} equipment items`);
+        fetchEquipment();
+      } catch (err: any) {
+        toast.error(`Error saving equipment: ${err.message}`);
+        throw err;
+      }
     } else {
-      const errorData = await res.json();
-      toast.error(`Error saving equipment: ${errorData.error || 'Unknown error'}`);
-      throw new Error('Failed to save');
+      // Single edit/create
+      const isEdit = !!equipmentData.id;
+      const url = isEdit 
+        ? `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment/${equipmentData.id}` 
+        : `${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:4000'}/api/equipment`;
+        
+      const res = await fetch(url, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(equipmentData)
+      });
+
+      if (res.ok) {
+        toast.success(isEdit ? 'Equipment updated successfully' : 'Equipment added successfully');
+        fetchEquipment();
+      } else {
+        const errorData = await res.json();
+        toast.error(`Error saving equipment: ${errorData.error || 'Unknown error'}`);
+        throw new Error('Failed to save');
+      }
     }
   };
 
