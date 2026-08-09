@@ -104,7 +104,7 @@ export default function ReturnEquipmentModal({ isOpen, onClose, onSuccess, inUse
                 required
                 options={allAssignments.map(a => ({ 
                   value: a.id, 
-                  label: `${a.equipmentName} (Cond: ${a.equipmentCondition}) - Qty: ${a.quantity}x - Pat ID: ${a.patientId}` 
+                  label: `${a.equipmentName} - Pat ID: ${a.patientId} (Assigned: ${new Date(a.assignedAt).toLocaleDateString()})` 
                 }))}
                 value={assignmentId || ''}
                 onChange={(val) => setAssignmentId(val as number)}
@@ -120,7 +120,8 @@ export default function ReturnEquipmentModal({ isOpen, onClose, onSuccess, inUse
                     ? `${assignedPatient.name} (Patient ID: ${assignedPatient.id})` 
                     : `Patient ID: ${selectedAssignment.patientId} (Name not found)`}
                 </p>
-                <p className="text-sm text-blue-700 mt-2 font-medium">Quantity to Return: {selectedAssignment.quantity}</p>
+                <p className="text-sm text-blue-700 mt-2 font-medium">Assigned On: {new Date(selectedAssignment.assignedAt).toLocaleDateString()}</p>
+                <p className="text-sm text-blue-700 mt-1 font-medium">Quantity to Return: {selectedAssignment.quantity}</p>
                 <div className="mt-4">
                   <label className="mb-2 block text-sm font-medium text-blue-900">Return Condition</label>
                   <select 

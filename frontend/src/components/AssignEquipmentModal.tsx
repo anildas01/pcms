@@ -115,8 +115,8 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!equipmentId || !patientId) {
-      toast.error("Please select both an equipment and a patient.");
+    if (!equipmentId || !patientId || !assignedById) {
+      toast.error("Please select equipment, patient, and assigner.");
       return;
     }
 
@@ -198,7 +198,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-900">Assigned By (Optional)</label>
+                <label className="block text-sm font-medium text-gray-900">Assigned By</label>
                 <button 
                   type="button" 
                   onClick={() => setIsUserModalOpen(true)}
@@ -208,6 +208,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
                 </button>
               </div>
               <SearchableSelect
+                required
                 options={users.map(u => ({ value: u.id, label: `${u.name} (${u.role?.name || u.roleId})` }))}
                 value={assignedById || ''}
                 onChange={(val) => setAssignedById(val as number)}
