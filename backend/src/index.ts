@@ -38,6 +38,8 @@ import billingRoutes from './routes/billing';
 app.use('/api/billing', billingRoutes);
 import attendanceRoutes from './routes/attendance';
 app.use('/api/attendance', attendanceRoutes);
+import suppliersRoutes from './routes/suppliers';
+app.use('/api/suppliers', suppliersRoutes);
 import auditRoutes from './routes/audit';
 app.use('/api/audit', auditRoutes);
 import vehicleRoutes from './routes/vehicles';
