@@ -12,7 +12,7 @@ interface ExportEquipmentModalProps {
 }
 
 export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }: ExportEquipmentModalProps) {
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState<number | null>(null);
+  const [selectedEquipmentName, setSelectedEquipmentName] = useState<string>('');
   const [condition, setCondition] = useState<string>('All');
   const [assignmentStatus, setAssignmentStatus] = useState<string>('All');
   const [assignedById, setAssignedById] = useState<number | null>(null);
@@ -53,8 +53,8 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
     let filteredData = [...equipmentData];
 
     // Filter by single equipment
-    if (selectedEquipmentId) {
-      filteredData = filteredData.filter(eq => eq.id === selectedEquipmentId);
+    if (selectedEquipmentName) {
+      filteredData = filteredData.filter(eq => eq.name === selectedEquipmentName);
     }
 
     // Filter by condition
@@ -151,9 +151,9 @@ export default function ExportEquipmentModal({ isOpen, onClose, equipmentData }:
           <div>
             <label className="mb-2 block text-sm font-medium text-gray-900">Select Specific Equipment</label>
             <SearchableSelect
-              options={[{ value: '', label: 'All Equipment' }, ...equipmentData.map(eq => ({ value: eq.id, label: eq.name }))]}
-              value={selectedEquipmentId || ''}
-              onChange={(val) => setSelectedEquipmentId(val as number || null)}
+              options={[{ value: '', label: 'All Equipment' }, ...Array.from(new Set(equipmentData.map(eq => eq.name))).sort().map(name => ({ value: name, label: name }))]}
+              value={selectedEquipmentName}
+              onChange={(val) => setSelectedEquipmentName(val as string)}
               placeholder="Search equipment..."
             />
           </div>
