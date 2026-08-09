@@ -281,7 +281,7 @@ export default function MedicinesPage() {
                       <tr key={med.id}>
                         <td data-label="Item Name" className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                           <div className="font-medium text-gray-900">{med.name}</div>
-                          <div className="text-gray-500 text-xs">{med.description || 'No description'}</div>
+                          <div className="text-gray-500 text-xs">{med.supplier ? `Supplier: ${med.supplier}` : 'No supplier'}</div>
                         </td>
                         <td data-label="Stock Level" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className={`font-semibold ${isLowStock(med.quantity) ? 'text-red-600' : 'text-gray-900'}`}>

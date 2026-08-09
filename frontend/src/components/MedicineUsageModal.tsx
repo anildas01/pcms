@@ -20,16 +20,28 @@ interface MedicineUsageModalProps {
 export default function MedicineUsageModal({ isOpen, onClose, onSave, medicines }: MedicineUsageModalProps) {
   const [medicineId, setMedicineId] = useState<number | ''>('');
   const [quantity, setQuantity] = useState<number | ''>('');
-  const [patientName, setPatientName] = useState('');
-  const [nurseName, setNurseName] = useState('');
+  const [homeCareSession, setHomeCareSession] = useState('');
+  const [isNewSession, setIsNewSession] = useState(false);
+  const [knownSessions, setKnownSessions] = useState<string[]>(['Home Care 1', 'Home Care 2']);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const savedSessions = localStorage.getItem('knownHomeCares');
+    if (savedSessions) {
+      try {
+        setKnownSessions(JSON.parse(savedSessions));
+      } catch (e) {
+        console.error('Failed to parse known home cares from local storage');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
       setMedicineId('');
       setQuantity('');
-      setPatientName('');
-      setNurseName('');
+      setHomeCareSession('');
+      setIsNewSession(false);
       setIsSubmitting(false);
     }
   }, [isOpen]);
@@ -47,13 +59,15 @@ export default function MedicineUsageModal({ isOpen, onClose, onSave, medicines 
       return;
     }
 
+    if (isNewSession && homeCareSession.trim()) {
+      const updatedSessions = Array.from(new Set([...knownSessions, homeCareSession.trim()]));
+      setKnownSessions(updatedSessions);
+      localStorage.setItem('knownHomeCares', JSON.stringify(updatedSessions));
+    }
+
     setIsSubmitting(true);
     try {
-      let parts = [];
-      if (patientName.trim()) parts.push(`to Patient: ${patientName.trim()}`);
-      if (nurseName.trim()) parts.push(`by Nurse: ${nurseName.trim()}`);
-      
-      const details = parts.length > 0 ? ` (${parts.join(', ')})` : '';
+      const details = homeCareSession.trim() ? ` (Session: ${homeCareSession.trim()})` : '';
       const reason = `Usage: Used ${quantity} ${selectedMed?.type || 'item'}${details}`;
       
       await onSave(medicineId as number, quantity as number, reason);
@@ -108,19 +122,56 @@ export default function MedicineUsageModal({ isOpen, onClose, onSave, medicines 
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="patientName" className="mb-2 block text-sm font-medium text-gray-900">Patient Name (Optional)</label>
-              <input type="text" name="patientName" id="patientName"
-                value={patientName} onChange={(e) => setPatientName(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
-                placeholder="e.g. John Doe" />
-            </div>
-
-            <div className="sm:col-span-2">
-              <label htmlFor="nurseName" className="mb-2 block text-sm font-medium text-gray-900">Nurse / Given By (Optional)</label>
-              <input type="text" name="nurseName" id="nurseName"
-                value={nurseName} onChange={(e) => setNurseName(e.target.value)}
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600" 
-                placeholder="e.g. Nurse Sarah" />
+              <label htmlFor="homeCareSession" className="mb-2 block text-sm font-medium text-gray-900">Home Care Session</label>
+              
+              {!isNewSession ? (
+                <div className="flex gap-2">
+                  <select 
+                    name="homeCareSession" 
+                    id="homeCareSession"
+                    value={homeCareSession} 
+                    onChange={(e) => setHomeCareSession(e.target.value)}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                  >
+                    <option value="">Select a session...</option>
+                    {knownSessions.map((sessionName, idx) => (
+                      <option key={idx} value={sessionName}>{sessionName}</option>
+                    ))}
+                  </select>
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsNewSession(true);
+                      setHomeCareSession('');
+                    }}
+                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    + Add New
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    name="homeCareSession" 
+                    id="homeCareSession"
+                    value={homeCareSession} 
+                    onChange={(e) => setHomeCareSession(e.target.value)}
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500" 
+                    placeholder="Enter new home care session..." 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => {
+                      setIsNewSession(false);
+                      setHomeCareSession('');
+                    }}
+                    className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>
