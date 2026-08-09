@@ -121,6 +121,9 @@ export default function ReturnEquipmentModal({ isOpen, onClose, onSuccess, inUse
                     : `Patient ID: ${selectedAssignment.patientId} (Name not found)`}
                 </p>
                 <p className="text-sm text-blue-700 mt-2 font-medium">Assigned On: {new Date(selectedAssignment.assignedAt).toLocaleDateString()}</p>
+                {selectedAssignment.assignedBy && (
+                  <p className="text-sm text-blue-700 mt-1 font-medium">Assigned By: {selectedAssignment.assignedBy.name}</p>
+                )}
                 <p className="text-sm text-blue-700 mt-1 font-medium">Quantity to Return: {selectedAssignment.quantity}</p>
                 <div className="mt-4">
                   <label className="mb-2 block text-sm font-medium text-blue-900">Return Condition</label>

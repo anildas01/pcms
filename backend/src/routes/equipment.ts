@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
       include: {
         assignments: {
           where: { status: 'In Use' },
-          include: { patient: true }
+          include: { patient: true, assignedBy: true }
         }
       }
     });
