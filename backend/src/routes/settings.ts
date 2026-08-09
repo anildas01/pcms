@@ -30,6 +30,16 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET all roles
+router.get('/roles', async (req, res) => {
+  try {
+    const roles = await prisma.role.findMany();
+    res.json(roles);
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // PUT update a setting
 router.put('/', async (req: any, res) => {
   try {
