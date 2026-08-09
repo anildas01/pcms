@@ -17,6 +17,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
   const [equipmentId, setEquipmentId] = useState<number | null>(null);
   const [patientId, setPatientId] = useState<number | null>(null);
   const quantity = 1;
+  const [assignedAt, setAssignedAt] = useState<string>(new Date().toISOString().split('T')[0]);
   const [patients, setPatients] = useState<any[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
@@ -87,7 +88,7 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ patientId, quantity })
+        body: JSON.stringify({ patientId, quantity, assignedAt })
       });
 
       if (res.ok) {
@@ -148,6 +149,17 @@ export default function AssignEquipmentModal({ isOpen, onClose, onSuccess, avail
                 value={patientId || ''}
                 onChange={(val) => setPatientId(val as number)}
                 placeholder="Search patient..."
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-900">Assigned Date</label>
+              <input 
+                type="date" 
+                required
+                value={assignedAt}
+                onChange={(e) => setAssignedAt(e.target.value)}
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-600 focus:ring-blue-600"
               />
             </div>
           </div>
